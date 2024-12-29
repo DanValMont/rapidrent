@@ -26,7 +26,7 @@ export const GET = async (
 };
 
 // DELETE /api/properties/:id
-export const DELETE = async (_: void, { params }: { params: { id: string } }) => {
+export const DELETE = async (request: Request, { params }: { params: { id: string } }) => {
   try {
     const propertyId = params.id;
 
