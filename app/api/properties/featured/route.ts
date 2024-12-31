@@ -2,14 +2,14 @@ import connectDB from '@/config/database';
 import Property from '@/models/Property';
 import { PropertyModelTypes } from '@/types/models-types';
 
-export const dynamic = 'force-dynamic';
+// export const dynamic = 'force-dynamic';
 
 // GET /api/properties/featured
-export const GET = async (request: Request) => {
+export const GET = async () => {
   try {
     await connectDB();
 
-    const properties: PropertyModelTypes[] = await Property.find({
+    const properties = await Property.find({
       is_featured: true,
     });
     

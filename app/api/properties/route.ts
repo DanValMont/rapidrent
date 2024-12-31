@@ -4,6 +4,8 @@ import { getSessionUser } from "@/utils/getSessionUser";
 import cloudinary from "@/config/cloudinary";
 import { type NextRequest } from "next/server";
 
+const dynamic = "force-dynamic";
+
 // GET /api/properties
 export const GET = async (request: NextRequest) => {
   try {
