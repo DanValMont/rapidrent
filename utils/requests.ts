@@ -1,4 +1,5 @@
 import { PropertyModelTypes, PropertyTotal } from "@/types/models-types";
+import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
 
 
 const apiDomain = process.env.NEXT_PUBLIC_API_DOMAIN || null;
@@ -18,17 +19,20 @@ async function fetchProperties({ showFeatured = false } : {showFeatured?: boolea
     }
         return res.json();
     } catch (error) {
+        if (isDynamicServerError(error)) {
+            throw error;
+          }
         console.log(error);
         return [];
     }  
   }
 
   // Fetch single property
-  async function fetchProperty(id: string): Promise<PropertyModelTypes> {
+  async function fetchProperty(id: string): Promise<PropertyModelTypes | null> {
     try {
         // Handle the case where the domain is not available yet
         if (!apiDomain) {
-            return {} as PropertyModelTypes;
+            return null;
         }
         const res = await fetch(`${apiDomain}/properties/${id}`);
   
@@ -39,7 +43,7 @@ async function fetchProperties({ showFeatured = false } : {showFeatured?: boolea
         return res.json();
     } catch (error) {
         console.log(error);
-        return {} as PropertyModelTypes;
+        return null;
     }
 }
 
