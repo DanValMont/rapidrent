@@ -4,15 +4,15 @@ import { getSessionUser } from "@/utils/getSessionUser";
 import cloudinary from "@/config/cloudinary";
 import { type NextRequest } from "next/server";
 // import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 // GET /api/properties
 export const GET = async (request: NextRequest) => {
-
+    const searchParams = request.nextUrl.searchParams;
   try {
     await connectDB();
-    const page = request.nextUrl.searchParams.get("page") || 1;
-    const pageSize = request.nextUrl.searchParams.get("pageSize") || 6;
+    const page = searchParams.get("page") || 1;
+    const pageSize = searchParams.get("pageSize") || 6;
 
     const skip = (Number(page) - 1) * Number(pageSize);
     const total = await Property.countDocuments({});
