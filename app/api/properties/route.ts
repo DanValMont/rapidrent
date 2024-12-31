@@ -3,7 +3,7 @@ import Property from "@/models/Property";
 import { getSessionUser } from "@/utils/getSessionUser";
 import cloudinary from "@/config/cloudinary";
 import { type NextRequest } from "next/server";
-// import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
+import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
 // export const dynamic = "force-dynamic";
 
 // GET /api/properties
@@ -27,9 +27,9 @@ export const GET = async (request: NextRequest) => {
 
     return Response.json(result);
   } catch (error) {
-    // if (isDynamicServerError(error)) {
-    //   throw error;
-    // }
+    if (isDynamicServerError(error)) {
+      throw error;
+    }
     console.log(error);
     return new Response("Something went wrong", { status: 500 });
   }
@@ -116,6 +116,9 @@ export const POST = async (request: Request) => {
       `${process.env.NEXTAUTH_URL}/properties/${newProperty._id}`
     );
   } catch (error) {
+    if (isDynamicServerError(error)) {
+      throw error;
+    }
     return new Response("Failed to add property", { status: 500 });
   }
 };
