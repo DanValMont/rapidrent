@@ -15,7 +15,7 @@ const config: Config = {
         '70/30': '70% 28%',
       },
       backgroundImage: {
-        'hero-background': 'linear-gradient(to right, #040D157F, #0F0F1D72),url("/public/image/hero-image.jpg")',
+        'hero-background': 'linear-gradient(to right, #040D157F, #0F0F1D72),url("public/image/hero-image.jpg")',
       }
     },
   },
