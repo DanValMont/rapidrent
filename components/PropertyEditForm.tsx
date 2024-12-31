@@ -42,7 +42,7 @@ const PropertyEditForm = () => {
     createdAt: new Date(),
     updatedAt: new Date(),
   });
-  const [imageFields, setImageFields] = useState<string[]>(['']);
+  const [imageFields, setImageFields] = useState<string[]>([""]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -76,10 +76,11 @@ const PropertyEditForm = () => {
           };
         }
 
-        setFields(propertyData);
-
-        if (propertyData.images && propertyData.images.length > 0) {
-          setImageFields(propertyData.images);
+        if (propertyData) {
+          setFields(propertyData);
+          if (propertyData.images && propertyData.images.length > 0) {
+            setImageFields(propertyData.images);
+          }
         }
       } catch (error) {
         console.error(error);
@@ -142,18 +143,21 @@ const PropertyEditForm = () => {
     }));
   };
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleImageChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
     const file = e.target.files?.[0];
     const existingUrl = imageFields[index];
 
     try {
       const formData = new FormData();
       if (existingUrl) {
-        formData.append('existingUrl', existingUrl);
+        formData.append("existingUrl", existingUrl);
       }
-    
+
       if (file) {
-        formData.append('image', file);
+        formData.append("image", file);
       }
 
       // If neither existingUrl nor file exists, skip the upload
@@ -161,78 +165,78 @@ const PropertyEditForm = () => {
         return;
       }
       const res = await fetch(`/api/upload/${id}`, {
-        method: 'POST',
+        method: "POST",
         body: formData,
       });
-  
-      if (!res.ok) throw new Error('Failed to upload image');
-  
+
+      if (!res.ok) throw new Error("Failed to upload image");
+
       const data = await res.json();
       const newImageFields = [...imageFields];
-      
+
       if (data.secure_url) {
         newImageFields[index] = data.secure_url; // Use the URL (existing or new)
       } else {
         newImageFields.splice(index, 1); // Remove the image if deleted
       }
-      
+
       setImageFields(newImageFields);
-      setFields(prev => ({
+      setFields((prev) => ({
         ...prev,
-        images: newImageFields.filter(url => url),
+        images: newImageFields.filter((url) => url),
       }));
     } catch (error) {
-      console.error('Error handling image:', error);
-      toast.error('Error handling image');
+      console.error("Error handling image:", error);
+      toast.error("Error handling image");
     }
   };
-  
+
   const addImageField = () => {
     if (imageFields.length < 4) {
-      setImageFields([...imageFields, '']);
+      setImageFields([...imageFields, ""]);
     }
   };
-  
+
   const removeImageField = async (index: number) => {
     if (imageFields.length > 1) {
-
       const existingUrl = imageFields[index];
       if (existingUrl) {
         const res = await fetch(`/api/upload/${id}`, {
-          method: 'DELETE',
+          method: "DELETE",
           headers: {
-            'Content-Type': 'application/json'},
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify(existingUrl),
         });
       }
 
       const newImageFields = imageFields.filter((_, i) => i !== index);
       setImageFields(newImageFields);
-      
+
       // Update the main form fields
-      setFields(prev => ({
+      setFields((prev) => ({
         ...prev,
-        images: newImageFields.filter(url => url),
+        images: newImageFields.filter((url) => url),
       }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     try {
       const formData = new FormData(e.target as HTMLFormElement);
-      
+
       // Add the images array to formData
       fields.images.forEach((url) => {
-        if (url) formData.append('images', url);
+        if (url) formData.append("images", url);
       });
-  
+
       const res = await fetch(`/api/properties/${id}`, {
         method: "PUT",
         body: formData,
       });
-  
+
       if (res.status === 200) {
         router.push(`/properties/${id}`);
       } else if (res.status === 401 || res.status === 403) {
@@ -697,52 +701,52 @@ const PropertyEditForm = () => {
         </div>
 
         {/* Image Upload Section */}
-<div className="mb-4">
-  <label className="block text-gray-700 font-bold mb-2">
-    Property Images
-  </label>
-  <div className="space-y-4">
-    {imageFields.map((imageUrl, index) => (
-      <div key={index} className="flex items-center space-x-4">
-        <input
-          type="file"
-          name="image"
-          accept="image/*"
-          onChange={(e) => handleImageChange(e, index)}
-          className="w-full border rounded py-2 px-3 min-w-0"
-        />
-        {imageUrl && (
-          <Image
-            src={imageUrl}
-            alt={`Property ${index + 1}`}
-            className="h-20 w-20 object-cover rounded"
-            width={0}
-            height={0}
-            sizes="100vw"
-            priority
-          />
-        )}
-        <button
-          type="button"
-          onClick={() => removeImageField(index)}
-          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-          disabled={imageFields.length <= 1}
-        >
-          Remove
-        </button>
-      </div>
-    ))}
-  </div>
-  {imageFields.length < 4 && (
-    <button
-      type="button"
-      onClick={addImageField}
-      className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-    >
-      Add Image
-    </button>
-  )}
-</div>
+        <div className="mb-4">
+          <label className="block text-gray-700 font-bold mb-2">
+            Property Images
+          </label>
+          <div className="space-y-4">
+            {imageFields.map((imageUrl, index) => (
+              <div key={index} className="flex items-center space-x-4">
+                <input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e, index)}
+                  className="w-full border rounded py-2 px-3 min-w-0"
+                />
+                {imageUrl && (
+                  <Image
+                    src={imageUrl}
+                    alt={`Property ${index + 1}`}
+                    className="h-20 w-20 object-cover rounded"
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    priority
+                  />
+                )}
+                <button
+                  type="button"
+                  onClick={() => removeImageField(index)}
+                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  disabled={imageFields.length <= 1}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+          {imageFields.length < 4 && (
+            <button
+              type="button"
+              onClick={addImageField}
+              className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Add Image
+            </button>
+          )}
+        </div>
 
         <div>
           <button
