@@ -65,4 +65,4 @@ RapidRent is a modern, full-featured web application designed to simplify the pr
 
 ## 🌐 Website Link:
 
-[RapidRent](https://rapidrent-danvalmonts-projects.vercel.app/)
+[RapidRent](https://rapidrent.vercel.app/)
